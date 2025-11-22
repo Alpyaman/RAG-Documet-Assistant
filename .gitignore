@@ -205,3 +205,22 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# RAG Document Assistant specific
+# Data directories (PDFs and vector databases)
+data/pdfs/*.pdf
+data/vector_db/
+data/embedding_cache/
+ 
+# Keep directory structure
+!data/pdfs/.gitkeep
+!data/vector_db/.gitkeep
+!data/embedding_cache/.gitkeep
+ 
+# Model cache
+models/
+.cache/
+ 
+# Logs
+*.log
+logs/
