@@ -21,7 +21,7 @@ from rag_assistant import (
     VectorStore,
 )
 from rag_assistant.chunking import ChunkingStrategy
-from rag_assistant.config import RAGConfig
+from rag_assistant.config import RagConfig
 from rich.console import Console
  
  
@@ -100,7 +100,7 @@ def example_custom_config():
     console.print("\n[bold cyan]Example: Custom Configuration[/bold cyan]\n")
  
     # Create custom configuration
-    custom_config = RAGConfig(
+    custom_config = RagConfig(
         chunk_size=500,  # Smaller chunks
         chunk_overlap=100,
         embedding_model_name="sentence-transformers/all-MiniLM-L6-v2",
@@ -173,7 +173,7 @@ def example_performance_comparison():
     for name, params in configs:
         console.print(f"\n[yellow]Testing: {name}[/yellow]")
  
-        config = RAGConfig(**params, collection_name=f"perf_{params['chunk_size']}")
+        config = RagConfig(**params, collection_name=f"perf_{params['chunk_size']}")
         pipeline = RAGPipeline(config=config)
  
         start = time.time()

@@ -24,5 +24,5 @@ __all__ = [
     "EmbeddingGenerator",
     "VectorStore",
     "RAGPipeline",
-    "RAGConfig",
+    "RagConfig",
 ]
