@@ -25,3 +25,18 @@ mypy==1.8.0
 # Optional: For progress bars and better UX
 tqdm==4.66.1
 rich==13.7.0
+
+# Optional LLM dependencies for Phase 2
+ 
+# OpenAI (for GPT models)
+openai>=1.0.0
+ 
+# Requests (for Ollama API calls)
+requests>=2.31.0
+ 
+# HuggingFace Transformers (for local models)
+transformers>=4.30.0
+torch>=2.0.0
+ 
+# Accelerate (optional, speeds up HuggingFace models)
+accelerate>=0.20.0

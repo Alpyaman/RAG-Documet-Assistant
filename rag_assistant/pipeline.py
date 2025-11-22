@@ -14,8 +14,8 @@ from .ingestion import PDFIngestor
 from .chunking import TextChunker, ChunkingStrategy
 from .embeddings import EmbeddingGenerator
 from .vector_store import VectorStore
-from .config import RAGConfig, get_config
- 
+from .generator import BaseLLMGenerator, create_generator, GenerationResult
+from .config import RagConfig, get_config
  
 logging.basicConfig(
     level=logging.INFO,
@@ -55,25 +55,31 @@ class RAGPipeline:
     2. Text chunking
     3. Embedding generation
     4. Vector storage
+    5. LLM answer generation
  
     Example:
         >>> pipeline = RAGPipeline()
         >>> result = pipeline.process_pdf("document.pdf")
         >>> print(f"Processed {result.chunks_created} chunks")
  
-        >>> # Query the processed documents
+        >>> # Query the processed documents (retrieval only)
         >>> results = pipeline.query("What is the main topic?", top_k=3)
         >>> for result in results:
         ...     print(result['text'][:100])
+ 
+        >>> # Generate an answer (retrieval + generation)
+        >>> answer = pipeline.generate_answer("What is the conclusion?")
+        >>> print(answer.answer)
     """
  
     def __init__(
         self,
-        config: Optional[RAGConfig] = None,
+        config: Optional[RagConfig] = None,
         ingestor: Optional[PDFIngestor] = None,
         chunker: Optional[TextChunker] = None,
         embedder: Optional[EmbeddingGenerator] = None,
         vector_store: Optional[VectorStore] = None,
+        generator: Optional[BaseLLMGenerator] = None,
     ):
         """
         Initialize the RAG pipeline.
@@ -84,6 +90,7 @@ class RAGPipeline:
             chunker: Custom text chunker (optional)
             embedder: Custom embedding generator (optional)
             vector_store: Custom vector store (optional)
+            generator: Custom LLM Generator (optional)
         """
         self.config = config or get_config()
  
@@ -105,6 +112,17 @@ class RAGPipeline:
         self.vector_store = vector_store or VectorStore(
             persist_directory=self.config.vector_db_path,
             collection_name=self.config.collection_name,
+        )
+
+        # Initialize LLM generator
+        self.generator = generator or create_generator(
+            provider=self.config.llm_provider,
+            model_name=self.config.llm_model_name,
+            temperature=self.config.llm_temperature,
+            max_tokens=self.config.llm_max_tokens,
+            api_key=self.config.openai_api_key if self.config.openai_api_key else None,
+            base_url=self.config.ollama_base_url if self.config.llm_provider == "ollama" else None,
+            device=self.config.device if self.config.llm_provider == "huggingface" else None,
         )
  
         logger.info("RAG Pipeline initialized successfully")
@@ -267,6 +285,67 @@ class RAGPipeline:
                 result['query_embedding'] = query_embedding
  
         return results
+    
+    def generate_answer(
+        self,
+        query_text: str,
+        top_k: int = 5,
+        filter_metadata: Optional[Dict] = None,
+        return_context: bool = False
+    ) -> GenerationResult:
+        """
+        Generate an answer to a question using RAG (Retrieval + Generation).
+ 
+        This is the main method for Phase 2 - it combines retrieval with LLM generation.
+ 
+        Args:
+            query_text: User's question
+            top_k: Number of context chunks to retrieve
+            filter_metadata: Optional metadata filters for retrieval
+            return_context: Whether to include context chunks in result
+ 
+        Returns:
+            GenerationResult with the LLM-generated answer
+ 
+        Example:
+            >>> pipeline = RAGPipeline()
+            >>> result = pipeline.generate_answer("What is the conclusion?")
+            >>> print(result.answer)
+            "The conclusion is that X, Y, and Z..."
+        """
+        logger.info(f"Generating answer for: '{query_text}'")
+ 
+        # Step 1: Retrieve relevant context
+        search_results = self.query(
+            query_text=query_text,
+            top_k=top_k,
+            filter_metadata=filter_metadata,
+        )
+ 
+        if not search_results:
+            logger.warning("No relevant context found for query")
+            return GenerationResult(
+                answer="I couldn't find any relevant information in the documents to answer this question.",
+                model=self.generator.model_name,
+                context_used=[],
+            )
+ 
+        # Extract text chunks from search results
+        context_chunks = [result['text'] for result in search_results]
+ 
+        logger.info(f"Retrieved {len(context_chunks)} context chunks")
+ 
+        # Step 2: Generate answer using LLM
+        result = self.generator.generate(
+            query=query_text,
+            context=context_chunks
+        )
+ 
+        # Optionally include context in result
+        if not return_context:
+            result.context_used = None
+ 
+        return result
  
     def get_stats(self) -> Dict:
         """
@@ -276,7 +355,8 @@ class RAGPipeline:
             Dictionary with pipeline statistics
         """
         vector_stats = self.vector_store.get_collection_stats()
-        model_info = self.embedder.get_model_info()
+        embedding_model_info = self.embedder.get_model_info()
+        llm_model_info = self.generator.get_model_info()
  
         return {
             "pipeline": {
@@ -284,7 +364,8 @@ class RAGPipeline:
                 "chunk_overlap": self.config.chunk_overlap,
                 "batch_size": self.config.batch_size,
             },
-            "model": model_info,
+            "embedding_model": embedding_model_info,
+            "llm_model": llm_model_info,
             "vector_store": vector_stats,
         }
  

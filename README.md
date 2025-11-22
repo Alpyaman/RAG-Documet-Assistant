@@ -32,7 +32,11 @@ PDF Document
     ↓
 [Vector Store] → Store in ChromaDB
     ↓
-[Query] → Similarity search for relevant chunks
+[Retrieval] → Similarity search for relevant chunks
+    ↓
+[Generation] → LLM generates answer from context
+    ↓
+Human-like Answer
 ```
 
 ---
@@ -245,6 +249,12 @@ EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
 VECTOR_DB_PATH=./data/vector_db
 BATCH_SIZE=32
 DEVICE=cpu
+# LLM Settings (Phase 2)
+LLM_PROVIDER=openai
+LLM_MODEL_NAME=gpt-3.5-turbo
+LLM_TEMPERATURE=0.7
+LLM_MAX_TOKENS=512
+OPENAI_API_KEY=your-key-here
 ```
  
 ### Programmatic Configuration
