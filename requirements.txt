@@ -40,3 +40,8 @@ torch>=2.0.0
  
 # Accelerate (optional, speeds up HuggingFace models)
 accelerate>=0.20.0
+
+# FastAPI and Web Server (Phase 3)
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6

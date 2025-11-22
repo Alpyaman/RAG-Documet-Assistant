@@ -1,0 +1,51 @@
+version: '3.8'
+ 
+services:
+  rag-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rag-assistant:latest
+    container_name: rag-assistant-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount data directory for persistence
+      - ./data:/app/data
+    environment:
+      # LLM Provider Configuration
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME:-llama2}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.7}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-512}
+ 
+      # OpenAI Configuration (if using OpenAI)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+ 
+      # Ollama Configuration (if using Ollama)
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
+ 
+      # Embedding Configuration
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME:-sentence-transformers/all-MiniLM-L6-v2}
+      - DEVICE=${DEVICE:-cpu}
+ 
+      # Chunking Configuration
+      - CHUNK_SIZE=${CHUNK_SIZE:-1000}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP:-200}
+ 
+      # Processing Configuration
+      - BATCH_SIZE=${BATCH_SIZE:-32}
+ 
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - rag-network
+ 
+networks:
+  rag-network:
+    driver: bridge
