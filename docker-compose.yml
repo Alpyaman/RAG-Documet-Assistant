@@ -45,7 +45,25 @@ services:
       start_period: 60s
     networks:
       - rag-network
- 
+
+rag-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rag-assistant:latest
+    container_name: rag-assistant-ui
+    ports:
+      - "8501:8501"
+    environment:
+      # API endpoint for the backend
+      - API_BASE_URL=http://rag-assistant:8000
+    command: streamlit run rag_assistant/ui.py --server.port=8501 --server.address=0.0.0.0
+    depends_on:
+      - rag-assistant
+    restart: unless-stopped
+    networks:
+      - rag-network 
+
 networks:
   rag-network:
     driver: bridge

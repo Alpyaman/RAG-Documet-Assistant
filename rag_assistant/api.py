@@ -18,9 +18,8 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
  
-from .pipeline import RAGPipeline, PipelineResult
-from .generator import GenerationResult
-from .config import RagConfig, get_config
+from .pipeline import RAGPipeline
+from .config import get_config
  
 # Configure logging
 logging.basicConfig(
