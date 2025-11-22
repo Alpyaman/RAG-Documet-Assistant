@@ -11,7 +11,7 @@ This frontend provides a user-friendly interface to:
 import os
 import requests
 import streamlit as st
-from typing import List, Dict, Optional
+from typing import Dict, Optional
 import time
  
 # Configuration
