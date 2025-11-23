@@ -8,7 +8,7 @@
  
 ## 📸 Live Demo
  
-![RAG Assistant Demo](./docs/demo.gif)
+![RAG Assistant Demo](demo.png)
  
 > **👆 PLACEHOLDER**: Run the app, upload a PDF, ask "What is the summary?", and replace this with a screenshot/GIF of the result.
 >
