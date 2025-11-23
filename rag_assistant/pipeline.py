@@ -6,16 +6,16 @@ RAG document processing pipeline.
 """
 
 import logging
-from pathlib import Path
-from typing import List, Dict, Optional
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional
 
-from .ingestion import PDFIngestor
-from .chunking import TextChunker, ChunkingStrategy
-from .embeddings import EmbeddingGenerator
-from .vector_store import VectorStore
-from .generator import BaseLLMGenerator, create_generator, GenerationResult
+from .chunking import ChunkingStrategy, TextChunker
 from .config import RagConfig, get_config
+from .embeddings import EmbeddingGenerator
+from .generator import BaseLLMGenerator, GenerationResult, create_generator
+from .ingestion import PDFIngestor
+from .vector_store import VectorStore
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

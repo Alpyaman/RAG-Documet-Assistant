@@ -10,12 +10,12 @@ This package provides tools for building a document Q&A system using:
 __version__ = "0.1.0"
 __author__ = "Alp Yaman"
 
-from .ingestion import PDFIngestor
 from .chunking import TextChunker
-from .embeddings import EmbeddingGenerator
-from .vector_store import VectorStore
-from .pipeline import RAGPipeline
 from .config import RagConfig
+from .embeddings import EmbeddingGenerator
+from .ingestion import PDFIngestor
+from .pipeline import RAGPipeline
+from .vector_store import VectorStore
 
 __all__ = [
     "PDFIngestor",

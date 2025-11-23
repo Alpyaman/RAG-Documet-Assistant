@@ -6,9 +6,9 @@ metadata extraction, and support for various PDF formats.
 """
 
 import logging
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
-from dataclasses import dataclass
 
 from PyPDF2 import PdfReader
 from PyPDF2.errors import PdfReadError

@@ -5,11 +5,13 @@ Uses sentence-transformers for generation semantic embeddings optimized for simi
 """
 
 import logging
-from typing import List, Tuple, Optional
-import numpy as np
 from pathlib import Path
-from sentence_transformers import SentenceTransformer
+from typing import List, Optional, Tuple
+
+import numpy as np
 import torch
+from sentence_transformers import SentenceTransformer
+
 from .chunking import Chunk
 
 logging.basicConfig(level=logging.INFO)

@@ -10,16 +10,16 @@ This module provides RESTful endpoints to:
 
 import logging
 import os
-from pathlib import Path
-from typing import List, Optional, Dict
 from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Dict, List, Optional
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, status
+from fastapi import FastAPI, File, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from .pipeline import RAGPipeline
 from .config import get_config
+from .pipeline import RAGPipeline
 
 # Configure logging
 logging.basicConfig(

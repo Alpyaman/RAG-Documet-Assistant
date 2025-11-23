@@ -9,8 +9,8 @@ Provides an abstract interface for multiple LLM providers:
 
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional
 from dataclasses import dataclass
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -355,12 +355,9 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         super().__init__(model_name, temperature, max_tokens)
 
         try:
-            from transformers import (
-                AutoTokenizer,
-                AutoModelForSeq2SeqLM,
-                AutoModelForCausalLM,
-            )
             import torch
+            from transformers import (AutoModelForCausalLM,
+                                      AutoModelForSeq2SeqLM, AutoTokenizer)
         except ImportError:
             raise ImportError(
                 "transformers and torch not installed. "

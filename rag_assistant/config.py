@@ -3,8 +3,8 @@ Configuration settings for RAG Document Assistant.
 Uses Pydantic for validation and environment variable management.
 """
 
-from pydantic_settings import BaseSettings
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class RagConfig(BaseSettings):

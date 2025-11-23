@@ -9,10 +9,11 @@ This frontend provides a user-friendly interface to:
 """
 
 import os
+import time
+from typing import Dict, Optional
+
 import requests
 import streamlit as st
-from typing import Dict, Optional
-import time
 
 # Configuration
 API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
