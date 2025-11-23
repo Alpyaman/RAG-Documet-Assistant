@@ -479,15 +479,30 @@ def create_generator(
 
     if provider == "openai":
         model_name = model_name or "gpt-3.5-turbo"
-        return OpenAIGenerator(model_name=model_name, **kwargs)
+        # Filter kwargs to only include parameters OpenAIGenerator accepts
+        openai_params = {"temperature", "max_tokens", "api_key"}
+        filtered_kwargs = {
+            k: v for k, v in kwargs.items() if k in openai_params and v is not None
+        }
+        return OpenAIGenerator(model_name=model_name, **filtered_kwargs)
 
     elif provider == "ollama":
         model_name = model_name or "llama2"
-        return OllamaGenerator(model_name=model_name, **kwargs)
+        # Filter kwargs to only include parameters OllamaGenerator accepts
+        ollama_params = {"temperature", "max_tokens", "base_url"}
+        filtered_kwargs = {
+            k: v for k, v in kwargs.items() if k in ollama_params and v is not None
+        }
+        return OllamaGenerator(model_name=model_name, **filtered_kwargs)
 
     elif provider == "huggingface":
         model_name = model_name or "google/flan-t5-base"
-        return HuggingFaceGenerator(model_name=model_name, **kwargs)
+        # Filter kwargs to only include parameters HuggingFaceGenerator accepts
+        hf_params = {"temperature", "max_tokens", "device"}
+        filtered_kwargs = {
+            k: v for k, v in kwargs.items() if k in hf_params and v is not None
+        }
+        return HuggingFaceGenerator(model_name=model_name, **filtered_kwargs)
 
     else:
         raise ValueError(

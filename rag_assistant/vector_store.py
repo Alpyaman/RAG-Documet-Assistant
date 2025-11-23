@@ -353,6 +353,41 @@ class VectorStore:
         logger.warning("Resetting vector store - all data will be lost!")
         self.delete_collection()
 
+    def close(self) -> None:
+        """
+        Close the ChromaDB client and release resources.
+
+        This is important for proper cleanup, especially on Windows
+        where file locks can prevent cleanup of temporary directories.
+        """
+        try:
+            import gc
+            import time
+
+            # ChromaDB PersistentClient doesn't have an explicit close,
+            # but we can delete our references to allow garbage collection
+            if hasattr(self, "collection"):
+                del self.collection
+            if hasattr(self, "client"):
+                del self.client
+
+            # Force garbage collection to release file handles immediately.
+            gc.collect()
+
+            # Small delay to ensure file handles are released (Windows issue)
+            time.sleep(0.1)
+
+            logger.debug("VectorStore closed")
+        except Exception as e:
+            logger.warning(f"Error during close: {e}")
+
+    def __del__(self):
+        """Cleanup when object is destroyed."""
+        try:
+            self.close()
+        except Exception:
+            pass  # Ignore errors during cleanup
+
     def __repr__(self) -> str:
         count = self.collection.count()
         return f"VectorStore(collection='{self.collection_name}', documents={count})"
