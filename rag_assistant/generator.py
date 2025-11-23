@@ -356,8 +356,11 @@ class HuggingFaceGenerator(BaseLLMGenerator):
 
         try:
             import torch
-            from transformers import (AutoModelForCausalLM,
-                                      AutoModelForSeq2SeqLM, AutoTokenizer)
+            from transformers import (
+                AutoModelForCausalLM,
+                AutoModelForSeq2SeqLM,
+                AutoTokenizer,
+            )
         except ImportError:
             raise ImportError(
                 "transformers and torch not installed. "
