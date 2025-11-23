@@ -16,6 +16,7 @@ from .chunking import Chunk
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class EmbeddingGenerator:
     """
     Generates semantic embeddings for text chunks using pre-trained models.
@@ -92,7 +93,7 @@ class EmbeddingGenerator:
         if not chunks:
             logger.warning("No chunks provided for embedding")
             return np.array([]), []
-        
+
         texts = [chunk.text for chunk in chunks]
         chunk_ids = [chunk.chunk_id for chunk in chunks]
 
@@ -110,7 +111,7 @@ class EmbeddingGenerator:
             logger.info(f"Successfully generated {len(embeddings)} embeddings with shape {embeddings.shape}")
 
             return embeddings, chunk_ids
-        
+
         except Exception as e:
             logger.error(f"Failed to generate embeddings: {e}")
             raise
@@ -133,7 +134,7 @@ class EmbeddingGenerator:
             )
 
             return embedding
-        
+
         except Exception as e:
             logger.error(f"Failed to embed text: {e}")
             raise
@@ -163,7 +164,7 @@ class EmbeddingGenerator:
             )
 
             return embeddings
-        
+
         except Exception as e:
             logger.error(f"Failed to embed batch: {e}")
             raise
@@ -186,16 +187,16 @@ class EmbeddingGenerator:
         # If embeddings are normalized, dot product = cosine similarity
         if self.normalize_embeddings:
             return float(np.dot(embedding1, embedding2))
-        
+
         # Otherwise, compute cosine similarity manually
         norm1 = np.linalg.norm(embedding1)
         norm2 = np.linalg.norm(embedding2)
 
         if norm1 == 0 or norm2 == 0:
             return 0.0
-        
+
         return float(np.dot(embedding1, embedding2) / (norm1 * norm2))
-    
+
     def get_model_info(self) -> dict:
         """
         Get information about the loaded model.
@@ -211,7 +212,7 @@ class EmbeddingGenerator:
             "normalized": self.normalize_embeddings,
             "max_seq_length": self.model.max_seq_length,
         }
-    
+
     @staticmethod
     def list_recommended_models() -> dict:
         """
@@ -227,7 +228,8 @@ class EmbeddingGenerator:
             "multilingual": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
             "legal_financial": "sentece-transformers/all-mpnet-base-v2",
         }
-    
+
+
 class EmbeddingCache:
     """
     Simple cache for storing and retrieving embeddings to avoid recomputation.
@@ -285,7 +287,7 @@ class EmbeddingCache:
 
         if not cache_file.exists():
             return None
-        
+
         try:
             data = np.load(cache_file, allow_pickle=True)
             embeddings = data['embeddings']
@@ -293,11 +295,11 @@ class EmbeddingCache:
 
             logger.info(f"Loaded {len(embeddings)} embeddings from cache: {cache_key}")
             return embeddings, chunk_ids
-        
+
         except Exception as e:
             logger.error(f"Failed to load cache {cache_key}: {e}")
             return None
-        
+
     def clear(self) -> None:
         """Delete all cached embeddings."""
         import shutil

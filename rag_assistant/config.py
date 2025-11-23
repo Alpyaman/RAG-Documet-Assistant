@@ -69,31 +69,31 @@ class RagConfig(BaseSettings):
         default="openai",
         description="LLM provider: 'openai', 'ollama', or 'huggingface'"
     )
- 
+
     llm_model_name: str = Field(
         default="gpt-3.5-turbo",
         description="Model name for the LLM provider."
     )
- 
+
     llm_temperature: float = Field(
         default=0.7,
         description="Sampling temperature for generation (0.0 to 1.0).",
         ge=0.0,
         le=1.0
     )
- 
+
     llm_max_tokens: int = Field(
         default=512,
         description="Maximum tokens in LLM response.",
         ge=50,
         le=4096
     )
- 
+
     openai_api_key: str = Field(
         default="",
         description="OpenAI API key (optional, can use env var)."
     )
- 
+
     ollama_base_url: str = Field(
         default="http://localhost:11434",
         description="Ollama server URL for local LLM."

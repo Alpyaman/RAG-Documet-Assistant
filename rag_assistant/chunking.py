@@ -15,6 +15,7 @@ from .ingestion import Document
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class ChunkingStrategy(Enum):
     """Available text chunking strategies."""
 
@@ -22,6 +23,7 @@ class ChunkingStrategy(Enum):
     SENTENCE = "sentence"
     PARAGRAPH = "paragraph"
     SEMANTIC = "semantic"
+
 
 @dataclass
 class Chunk:
@@ -36,7 +38,8 @@ class Chunk:
     def __repr__(self) -> str:
         preview = self.text[:50] + "..." if len(self.text) > 50 else self.text
         return f"Chunk(id={self.chunk_id}, length={len(self.text)}, preview={preview})"
-    
+
+
 class TextChunker:
     """
     Splits documents into chunks for embedding and retrieval.
@@ -54,14 +57,14 @@ class TextChunker:
     """
 
     def __init__(
-            self,
-            chunk_size: int = 1000,
-            chunk_overlap: int = 200,
-            strategy: ChunkingStrategy = ChunkingStrategy.FIXED_SIZE,
+        self,
+        chunk_size: int = 1000,
+        chunk_overlap: int = 200,
+        strategy: ChunkingStrategy = ChunkingStrategy.FIXED_SIZE,
     ):
         """
         Initialize the text chunker.
-        
+
         Args:
             chunk_size: Target size for each chunk (in characters)
             chunk_overlap: Number of overlapping characters between chunks
@@ -69,17 +72,19 @@ class TextChunker:
         """
         if chunk_overlap >= chunk_size:
             raise ValueError("chunk_overlap must be less than chunk_size")
-        
+
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.strategy = strategy
 
-        logger.info(f"TextChunker initialized with strategy={strategy.value}, chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}")
+        logger.info(
+            f"TextChunker initialized with strategy={strategy.value}, chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}"
+        )
 
     def chunk_document(self, document: Document) -> List[Chunk]:
         """
         Split a document into chunks based on the configured strategy.
-        
+
         Args:
             document: Document to chunk
 
@@ -95,7 +100,9 @@ class TextChunker:
         else:
             raise NotImplementedError(f"Strategy {self.strategy} not implemented yet")
         
-        logger.info(f"Created {len(chunks)} chunks from document (source: {document.metadata.get('filename', 'unknown')})")
+        logger.info(
+            f"Created {len(chunks)} chunks from document (source: {document.metadata.get('filename', 'unknown')})"
+        )
 
         return chunks
     
@@ -110,13 +117,9 @@ class TextChunker:
         Returns:
             List of Chunk objects
         """
-        doc = Document(
-            content=text,
-            metadata={"source": source},
-            source=source
-        )
+        doc = Document(content=text, metadata={"source": source}, source=source)
         return self.chunk_document(doc)
-    
+
     def _chunk_fixed_size(self, document: Document) -> List[Chunk]:
         """
         Split text into fixed-size chunks with overlap.
@@ -159,7 +162,7 @@ class TextChunker:
             chunk_index += 1
 
         return chunks
-    
+
     def _chunk_by_sentence(self, document: Document) -> List[Chunk]:
         """
         Split text into chunks at sentence boundaries.
@@ -168,7 +171,7 @@ class TextChunker:
         text = document.content
 
         # Simple sentence splitting (can be improved with spacy/NLTK)
-        sentences = re.split(r'(?<=[.!?])\s+', text)
+        sentences = re.split(r"(?<=[.!?])\s+", text)
 
         chunks = []
         current_chunk = []
@@ -195,7 +198,7 @@ class TextChunker:
                         },
                         chunk_id=chunk_id,
                         start_char=char_position - current_size,
-                        end_char=char_position
+                        end_char=char_position,
                     )
                 )
 
@@ -212,7 +215,7 @@ class TextChunker:
                 current_chunk = overlap_sentences
                 current_size = overlap_size
                 chunk_index += 1
-            
+
             current_chunk.append(sentence)
             current_size += sentence_len
             char_position += sentence_len
@@ -236,9 +239,9 @@ class TextChunker:
                     end_char=char_position,
                 )
             )
-        
+
         return chunks
-    
+
     def _chunk_by_paragraph(self, document: Document) -> List[Chunk]:
         """
         Split text into chunks at paragraph boundaries.
@@ -247,7 +250,7 @@ class TextChunker:
         text = document.content
 
         # Split on double newlines (paragraph breaks)
-        paragraphs = re.split(r'\ns*\n', text)
+        paragraphs = re.split(r"\ns*\n", text)
 
         chunks = []
         current_chunk = []
@@ -268,7 +271,7 @@ class TextChunker:
                 para_doc = Document(
                     content=paragraph,
                     metadata=document.metadata,
-                    source=document.source
+                    source=document.source,
                 )
                 para_chunks = self._chunk_fixed_size(para_doc)
                 chunks.extend(para_chunks)
@@ -323,7 +326,7 @@ class TextChunker:
             )
 
         return chunks
-    
+
     def get_chunk_stats(self, chunks: List[Chunk]) -> Dict[str, any]:
         """
         Calculate statistics about the chunks.
@@ -336,7 +339,7 @@ class TextChunker:
         """
         if not chunks:
             return {}
-        
+
         chunk_sizes = [len(chunk.text) for chunk in chunks]
 
         return {
