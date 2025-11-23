@@ -9,10 +9,8 @@ import logging
 from typing import List, Dict, Optional
 from pathlib import Path
 import numpy as np
-
 import chromadb
 from chromadb.config import Settings
-
 from .chunking import Chunk
 
 logging.basicConfig(level=logging.INFO)
