@@ -9,11 +9,7 @@
 ## 📸 Live Demo
  
 ![RAG Assistant Demo](demo.png)
- 
-> **👆 PLACEHOLDER**: Run the app, upload a PDF, ask "What is the summary?", and replace this with a screenshot/GIF of the result.
->
-> **To capture**: `docker-compose up --build` → Open `http://localhost:8501` → Upload PDF → Ask question → Screenshot
- 
+
 ---
  
 ## ⚡ Quick Start (Docker)
