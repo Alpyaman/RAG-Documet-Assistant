@@ -99,11 +99,11 @@ class RagConfig(BaseSettings):
         description="Ollama server URL for local LLM."
     )
 
+
     class Config:
         env_file=".env"
         env_file_encoding="utf-8"
         case_sensitive=False
-
 
 def get_config() -> RagConfig:
     """Factory function to get configuration instance."""

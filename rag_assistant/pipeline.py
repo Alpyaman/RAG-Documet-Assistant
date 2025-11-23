@@ -72,15 +72,7 @@ class RAGPipeline:
         >>> print(answer.answer)
     """
  
-    def __init__(
-        self,
-        config: Optional[RagConfig] = None,
-        ingestor: Optional[PDFIngestor] = None,
-        chunker: Optional[TextChunker] = None,
-        embedder: Optional[EmbeddingGenerator] = None,
-        vector_store: Optional[VectorStore] = None,
-        generator: Optional[BaseLLMGenerator] = None,
-    ):
+    def __init__(self, config: Optional[RagConfig] = None, ingestor: Optional[PDFIngestor] = None, chunker: Optional[TextChunker] = None, embedder: Optional[EmbeddingGenerator] = None, vector_store: Optional[VectorStore] = None, generator: Optional[BaseLLMGenerator] = None):
         """
         Initialize the RAG pipeline.
  
@@ -247,13 +239,7 @@ class RAGPipeline:
  
         return result
  
-    def query(
-        self,
-        query_text: str,
-        top_k: int = 5,
-        filter_metadata: Optional[Dict] = None,
-        return_embeddings: bool = False
-    ) -> List[Dict]:
+    def query(self, query_text: str, top_k: int = 5, filter_metadata: Optional[Dict] = None, return_embeddings: bool = False) -> List[Dict]:
         """
         Query the vector store for relevant document chunks.
  
@@ -286,13 +272,7 @@ class RAGPipeline:
  
         return results
     
-    def generate_answer(
-        self,
-        query_text: str,
-        top_k: int = 5,
-        filter_metadata: Optional[Dict] = None,
-        return_context: bool = False
-    ) -> GenerationResult:
+    def generate_answer(self, query_text: str, top_k: int = 5, filter_metadata: Optional[Dict] = None, return_context: bool = False) -> GenerationResult:
         """
         Generate an answer to a question using RAG (Retrieval + Generation).
  

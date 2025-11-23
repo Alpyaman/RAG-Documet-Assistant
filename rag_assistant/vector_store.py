@@ -37,11 +37,7 @@ class VectorStore:
         >>> results = store.search("What is the main topic?", top_k=5)
     """
  
-    def __init__(
-        self,
-        persist_directory: str = "./data/vector_db",
-        collection_name: str = "document_embeddings",
-    ):
+    def __init__(self, persist_directory: str = "./data/vector_db", collection_name: str = "document_embeddings",):
         """
         Initialize the vector store.
  
@@ -77,12 +73,7 @@ class VectorStore:
             f"Documents: {self.collection.count()}"
         )
  
-    def add_embeddings(
-        self,
-        embeddings: np.ndarray,
-        chunks: List[Chunk],
-        batch_size: int = 100
-    ) -> None:
+    def add_embeddings(self, embeddings: np.ndarray, chunks: List[Chunk], batch_size: int = 100) -> None:
         """
         Add embeddings and their associated chunks to the vector store.
  
@@ -128,12 +119,7 @@ class VectorStore:
             f"Total in collection: {self.collection.count()}"
         )
  
-    def search(
-        self,
-        query_embedding: np.ndarray,
-        top_k: int = 5,
-        filter_metadata: Optional[Dict] = None
-    ) -> List[Dict]:
+    def search(self, query_embedding: np.ndarray, top_k: int = 5, filter_metadata: Optional[Dict] = None) -> List[Dict]:
         """
         Search for similar documents using a query embedding.
  
@@ -177,12 +163,7 @@ class VectorStore:
             logger.error(f"Search failed: {e}")
             raise
  
-    def search_by_text(
-        self,
-        query_text: str,
-        top_k: int = 5,
-        filter_metadata: Optional[Dict] = None
-    ) -> List[Dict]:
+    def search_by_text(self, query_text: str, top_k: int = 5, filter_metadata: Optional[Dict] = None) -> List[Dict]:
         """
         Search using text (ChromaDB will handle embedding internally).
  

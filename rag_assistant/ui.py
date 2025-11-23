@@ -18,11 +18,7 @@ import time
 API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
  
 # Page configuration
-st.set_page_config(
-    page_title="RAG Document Assistant",
-    page_icon="📚",
-    layout="wide",
-    initial_sidebar_state="expanded"
+st.set_page_config(page_title="RAG Document Assistant", page_icon="📚", layout="wide", initial_sidebar_state="expanded"
 )
  
 # Custom CSS for better styling
@@ -371,7 +367,7 @@ def main():
                 st.success("✅ API is healthy and reachable!")
             else:
                 st.error("❌ Cannot reach the API")
- 
- 
+
+
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 """
 RAG Document Assistant - An end-to-end Retrieval-Augmented Generation system.
-
 This package provides tools for building a document Q&A system using:
 - PDF ingestion and processing
 - Text chunking strategies
@@ -18,11 +17,4 @@ from .vector_store import VectorStore
 from .pipeline import RAGPipeline
 from .config import RagConfig
 
-__all__ = [
-    "PDFIngestor",
-    "TextChunker",
-    "EmbeddingGenerator",
-    "VectorStore",
-    "RAGPipeline",
-    "RagConfig",
-]
+__all__ = ["PDFIngestor", "TextChunker", "EmbeddingGenerator", "VectorStore", "RAGPipeline", "RagConfig"]

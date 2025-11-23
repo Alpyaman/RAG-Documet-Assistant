@@ -33,13 +33,7 @@ class EmbeddingGenerator:
         >>> print(f"Generated {len(embeddings)} embeddings")
     """
 
-    def __init__(
-            self,
-            model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
-            device: Optional[str] = None,
-            batch_size: int = 32,
-            normalize_embeddings: bool = True,
-    ):
+    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2", device: Optional[str] = None, batch_size: int = 32, normalize_embeddings: bool = True,):
         """
         Initialize the embedding generator.
 
@@ -73,11 +67,7 @@ class EmbeddingGenerator:
             logger.error(f"Failed to load model {model_name}: {e}")
             raise
 
-    def embed_chunks(
-            self,
-            chunks: List[Chunk],
-            show_progress: bool = True
-    ) -> Tuple[np.ndarray, List[str]]:
+    def embed_chunks(self, chunks: List[Chunk], show_progress: bool = True) -> Tuple[np.ndarray, List[str]]:
         """
         Generate embeddings for a list of chunks.
 
@@ -139,11 +129,7 @@ class EmbeddingGenerator:
             logger.error(f"Failed to embed text: {e}")
             raise
 
-    def embed_batch(
-            self,
-            texts: List[str],
-            show_progress: bool = False
-    ) -> np.ndarray:
+    def embed_batch(self, texts: List[str], show_progress: bool = False) -> np.ndarray:
         """
         Generate embedding for a batch of texts.
 
@@ -169,11 +155,7 @@ class EmbeddingGenerator:
             logger.error(f"Failed to embed batch: {e}")
             raise
 
-    def compute_similarity(
-            self,
-            embedding1: np.ndarray,
-            embedding2: np.ndarray
-    ) -> float:
+    def compute_similarity(self, embedding1: np.ndarray, embedding2: np.ndarray) -> float:
         """
         Compute cosine similarity between two embeddings.
 
@@ -213,6 +195,7 @@ class EmbeddingGenerator:
             "max_seq_length": self.model.max_seq_length,
         }
 
+
     @staticmethod
     def list_recommended_models() -> dict:
         """
@@ -249,12 +232,7 @@ class EmbeddingCache:
 
         logger.info(f"Embedding cache initialized at {self.cache_dir}")
 
-    def save(
-            self,
-            chunk_ids: List[str],
-            embeddings: np.ndarray,
-            cache_key: str
-    ) -> None:
+    def save(self, chunk_ids: List[str], embeddings: np.ndarray, cache_key: str) -> None:
         """
         Save embeddings to cache.
 

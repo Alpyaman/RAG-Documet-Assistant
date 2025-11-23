@@ -126,13 +126,7 @@ class OpenAIGenerator(BaseLLMGenerator):
         >>> print(result.answer)
     """
 
-    def __init__(
-        self,
-        model_name: str = "gpt-3.5-turbo",
-        temperature: float = 0.7,
-        max_tokens: int = 512,
-        api_key: Optional[str] = None
-    ):
+    def __init__(self, model_name: str = "gpt-3.5-turbo", temperature: float = 0.7, max_tokens: int = 512, api_key: Optional[str] = None):
         """
         Initialize OpenAI generator.
 
@@ -217,13 +211,7 @@ class OllamaGenerator(BaseLLMGenerator):
         >>> print(result.answer)
     """
 
-    def __init__(
-        self,
-        model_name: str = "llama2",
-        temperature: float = 0.7,
-        max_tokens: int = 512,
-        base_url: str = "http://localhost:11434"
-    ):
+    def __init__(self, model_name: str = "llama2", temperature: float = 0.7, max_tokens: int = 512, base_url: str = "http://localhost:11434"):
         """
         Initialize Ollama generator.
 
@@ -323,13 +311,7 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         >>> print(result.answer)
     """
 
-    def __init__(
-        self,
-        model_name: str = "google/flan-t5-base",
-        temperature: float = 0.7,
-        max_tokens: int = 512,
-        device: str = "cpu"
-    ):
+    def __init__(self, model_name: str = "google/flan-t5-base", temperature: float = 0.7, max_tokens: int = 512, device: str = "cpu"):
         """
         Initialize HuggingFace generator.
 
@@ -438,11 +420,7 @@ class HuggingFaceGenerator(BaseLLMGenerator):
             raise
 
 
-def create_generator(
-    provider: str = "openai",
-    model_name: Optional[str] = None,
-    **kwargs
-) -> BaseLLMGenerator:
+def create_generator(provider: str = "openai", model_name: Optional[str] = None, **kwargs) -> BaseLLMGenerator:
     """
     Factory function to create an LLM generator.
 

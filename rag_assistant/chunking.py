@@ -12,6 +12,7 @@ from enum import Enum
 
 from .ingestion import Document
 
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -56,12 +57,7 @@ class TextChunker:
         >>> print(f"Created {len(chunks)} chunks")
     """
 
-    def __init__(
-        self,
-        chunk_size: int = 1000,
-        chunk_overlap: int = 200,
-        strategy: ChunkingStrategy = ChunkingStrategy.FIXED_SIZE,
-    ):
+    def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200, strategy: ChunkingStrategy = ChunkingStrategy.FIXED_SIZE,):
         """
         Initialize the text chunker.
 
@@ -77,9 +73,7 @@ class TextChunker:
         self.chunk_overlap = chunk_overlap
         self.strategy = strategy
 
-        logger.info(
-            f"TextChunker initialized with strategy={strategy.value}, chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}"
-        )
+        logger.info(f"TextChunker initialized with strategy={strategy.value}, chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}")
 
     def chunk_document(self, document: Document) -> List[Chunk]:
         """
