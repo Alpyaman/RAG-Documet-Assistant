@@ -99,7 +99,7 @@ class RAGPipeline:
         self.chunker = chunker or TextChunker(
             chunk_size=self.config.chunk_size,
             chunk_overlap=self.config.chunk_overlap,
-            strategy=ChunkingStrategy.FIXED_SIZE,
+            strategy=ChunkingStrategy.PARAGRAPH,
         )
 
         self.embedder = embedder or EmbeddingGenerator(
