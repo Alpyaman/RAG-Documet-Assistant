@@ -13,10 +13,8 @@ from dataclasses import dataclass
 from PyPDF2 import PdfReader
 from PyPDF2.errors import PdfReadError
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class Document:
@@ -27,9 +25,10 @@ class Document:
     source: str
 
     def __repr__(self) -> str:
-        preview = self.content[:100] + "..." if len(self.content) > 100 else self.content
+        preview = (
+            self.content[:100] + "..." if len(self.content) > 100 else self.content
+        )
         return f"Document(source={self.source}, length={len(self.content)}, preview={preview})"
-
 
 class PDFIngestor:
     """
@@ -56,7 +55,6 @@ class PDFIngestor:
         """
         self.encoding = encoding
         logger.info("PDFIngestor initialized")
-
     def ingest_pdf(self, pdf_path: str | Path) -> Document:
         """
         Extract text and metadata from a single PDF file.
@@ -104,16 +102,11 @@ class PDFIngestor:
                 f"from {metadata['page_count']} pages"
             )
 
-            return Document(
-                content=full_text,
-                metadata=metadata,
-                source=str(pdf_path)
-            )
+            return Document(content=full_text, metadata=metadata, source=str(pdf_path))
 
         except PdfReadError as e:
             logger.error(f"Failed to read PDF {pdf_path.name}: {e}")
             raise
-
     def ingest_directory(self, directory_path: str | Path) -> List[Document]:
         """
         Process all PDF files in a directory.
@@ -142,7 +135,6 @@ class PDFIngestor:
 
         logger.info(f"Successfully processed {len(documents)}/{len(pdf_files)} PDFs")
         return documents
-
     def _extract_metadata(self, reader: PdfReader, pdf_path: Path) -> Dict[str, any]:
         """
         Extract metadata from PDF.
@@ -163,17 +155,18 @@ class PDFIngestor:
         # Try to extract PDF metadata (may not always be present)
         if reader.metadata:
             try:
-                metadata.update({
-                    "title": reader.metadata.get("/Title", "Unknown"),
-                    "author": reader.metadata.get("/Author", "Unknown"),
-                    "creator": reader.metadata.get("/Creator", "Unknown"),
-                    "producer": reader.metadata.get("/Producer", "Unknown"),
-                })
+                metadata.update(
+                    {
+                        "title": reader.metadata.get("/Title", "Unknown"),
+                        "author": reader.metadata.get("/Author", "Unknown"),
+                        "creator": reader.metadata.get("/Creator", "Unknown"),
+                        "producer": reader.metadata.get("/Producer", "Unknown"),
+                    }
+                )
             except Exception as e:
                 logger.debug(f"Could not extract all metadata: {e}")
 
         return metadata
-
     def get_page_content(self, pdf_path: str | Path, page_number: int) -> str:
         """
         Extract text from a specific page.
@@ -187,7 +180,7 @@ class PDFIngestor:
         """
         pdf_path = Path(pdf_path)
         reader = PdfReader(str(pdf_path))
- 
+
         if page_number < 1 or page_number > len(reader.pages):
             raise ValueError(
                 f"Page number {page_number} out of range (1-{len(reader.pages)})"

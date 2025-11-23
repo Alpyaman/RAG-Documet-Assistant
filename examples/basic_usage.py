@@ -18,9 +18,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 
-
 console = Console()
-
 
 def main():
     """Run the basic RAG pipeline example."""
@@ -34,10 +32,9 @@ def main():
     console.print("[green]✓ Pipeline initialized successfully[/green]\n")
 
     # Example 1: Process a single PDF
-    console.print(Panel.fit(
-        "[bold]Example 1: Process a PDF Document[/bold]",
-        border_style="blue"
-    ))
+    console.print(
+        Panel.fit("[bold]Example 1: Process a PDF Document[/bold]", border_style="blue")
+    )
 
     pdf_path = "./data/pdfs/sample_document.pdf"
 
@@ -66,7 +63,9 @@ def main():
         console.print(table)
 
     # Example 2: Query the document
-    console.print(f"\n{Panel.fit('[bold]Example 2: Query the Document[/bold]', border_style='blue')}\n")
+    console.print(
+        f"\n{Panel.fit('[bold]Example 2: Query the Document[/bold]', border_style='blue')}\n"
+    )
 
     sample_queries = [
         "What is the main topic of the document?",
@@ -80,25 +79,33 @@ def main():
         results = pipeline.query(query, top_k=3)
 
         if not results:
-            console.print("[yellow]No results found. Process a document first.[/yellow]")
+            console.print(
+                "[yellow]No results found. Process a document first.[/yellow]"
+            )
             continue
 
         console.print(f"\n[green]Found {len(results)} relevant chunks:[/green]\n")
 
         for i, result in enumerate(results, 1):
-            similarity = result['similarity']
-            text_preview = result['text'][:200] + "..." if len(result['text']) > 200 else result['text']
+            similarity = result["similarity"]
+            text_preview = (
+                result["text"][:200] + "..."
+                if len(result["text"]) > 200
+                else result["text"]
+            )
 
             console.print(
                 Panel(
                     f"[bold]Chunk #{i}[/bold] (Similarity: {similarity:.3f})\n\n{text_preview}",
                     border_style="green",
-                    expand=False
+                    expand=False,
                 )
             )
 
     # Example 3: Get pipeline statistics
-    console.print(f"\n{Panel.fit('[bold]Example 3: Pipeline Statistics[/bold]', border_style='blue')}\n")
+    console.print(
+        f"\n{Panel.fit('[bold]Example 3: Pipeline Statistics[/bold]', border_style='blue')}\n"
+    )
 
     stats = pipeline.get_stats()
 
@@ -118,7 +125,6 @@ def main():
 
     console.print("\n[green]✓ Example completed successfully[/green]\n")
 
-
 if __name__ == "__main__":
     try:
         main()
@@ -127,4 +133,5 @@ if __name__ == "__main__":
     except Exception as e:
         console.print(f"\n[bold red]Error:[/bold red] {e}")
         import traceback
+
         traceback.print_exc()

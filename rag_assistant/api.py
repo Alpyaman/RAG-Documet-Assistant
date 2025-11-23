@@ -23,14 +23,12 @@ from .config import get_config
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 # Global pipeline instance
 pipeline: Optional[RAGPipeline] = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -53,19 +51,25 @@ async def lifespan(app: FastAPI):
     # Cleanup (if needed)
     logger.info("Shutting down RAG Pipeline...")
 
-
 # Create FastAPI app
-app = FastAPI(title="RAG Document Assistant API", description="A production-ready RAG system for document Q&A", version="1.0.0", lifespan=lifespan)
-
+app = FastAPI(
+    title="RAG Document Assistant API",
+    description="A production-ready RAG system for document Q&A",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 # Request/Response Models
 class QueryRequest(BaseModel):
     """Request model for querying documents."""
 
     query: str = Field(..., description="The query text", min_length=1)
-    top_k: int = Field(default=5, description="Number of results to return", ge=1, le=20)
-    filter_metadata: Optional[Dict] = Field(default=None, description="Optional metadata filters")
-
+    top_k: int = Field(
+        default=5, description="Number of results to return", ge=1, le=20
+    )
+    filter_metadata: Optional[Dict] = Field(
+        default=None, description="Optional metadata filters"
+    )
 
 class QueryResponse(BaseModel):
     """Response model for query results."""
@@ -74,14 +78,16 @@ class QueryResponse(BaseModel):
     results: List[Dict]
     count: int
 
-
 class GenerateRequest(BaseModel):
     """Request model for generating answers."""
 
     query: str = Field(..., description="The question to answer", min_length=1)
-    top_k: int = Field(default=5, description="Number of context chunks to use", ge=1, le=20)
-    return_context: bool = Field(default=False, description="Include context chunks in response")
-
+    top_k: int = Field(
+        default=5, description="Number of context chunks to use", ge=1, le=20
+    )
+    return_context: bool = Field(
+        default=False, description="Include context chunks in response"
+    )
 
 class GenerateResponse(BaseModel):
     """Response model for generated answers."""
@@ -91,7 +97,6 @@ class GenerateResponse(BaseModel):
     model: str
     context_used: Optional[List[str]] = None
 
-
 class UploadResponse(BaseModel):
     """Response model for file upload."""
 
@@ -99,12 +104,10 @@ class UploadResponse(BaseModel):
     status: str
     result: Dict
 
-
 class StatsResponse(BaseModel):
     """Response model for statistics."""
- 
-    stats: Dict
 
+    stats: Dict
 
 # API Endpoints
 
@@ -114,9 +117,8 @@ async def root():
     return {
         "status": "healthy",
         "service": "RAG Document Assistant API",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
-
 
 @app.post("/upload", response_model=UploadResponse, tags=["Documents"])
 async def upload_pdf(file: UploadFile = File(...)):
@@ -135,10 +137,10 @@ async def upload_pdf(file: UploadFile = File(...)):
     Returns:
         Processing result with statistics
     """
-    if not file.filename.endswith('.pdf'):
+    if not file.filename.endswith(".pdf"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only PDF files are supported"
+            detail="Only PDF files are supported",
         )
 
     try:
@@ -159,7 +161,7 @@ async def upload_pdf(file: UploadFile = File(...)):
             logger.error(f"Errors during processing: {result.errors}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Processing failed: {result.errors[0]}"
+                detail=f"Processing failed: {result.errors[0]}",
             )
 
         return UploadResponse(
@@ -169,8 +171,8 @@ async def upload_pdf(file: UploadFile = File(...)):
                 "documents_processed": result.documents_processed,
                 "chunks_created": result.chunks_created,
                 "embeddings_stored": result.embeddings_stored,
-                "processing_time": round(result.processing_time, 2)
-            }
+                "processing_time": round(result.processing_time, 2),
+            },
         )
 
     except HTTPException:
@@ -179,9 +181,8 @@ async def upload_pdf(file: UploadFile = File(...)):
         logger.error(f"Upload failed: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to process file: {str(e)}"
+            detail=f"Failed to process file: {str(e)}",
         )
-
 
 @app.post("/query", response_model=QueryResponse, tags=["Search"])
 async def query_documents(request: QueryRequest):
@@ -203,22 +204,17 @@ async def query_documents(request: QueryRequest):
             query_text=request.query,
             top_k=request.top_k,
             filter_metadata=request.filter_metadata,
-            return_embeddings=False
+            return_embeddings=False,
         )
 
-        return QueryResponse(
-            query=request.query,
-            results=results,
-            count=len(results)
-        )
+        return QueryResponse(query=request.query, results=results, count=len(results))
 
     except Exception as e:
         logger.error(f"Query failed: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Query failed: {str(e)}"
+            detail=f"Query failed: {str(e)}",
         )
-
 
 @app.post("/generate", response_model=GenerateResponse, tags=["Generation"])
 async def generate_answer(request: GenerateRequest):
@@ -241,23 +237,22 @@ async def generate_answer(request: GenerateRequest):
         result = pipeline.generate_answer(
             query_text=request.query,
             top_k=request.top_k,
-            return_context=request.return_context
+            return_context=request.return_context,
         )
 
         return GenerateResponse(
             query=request.query,
             answer=result.answer,
             model=result.model,
-            context_used=result.context_used if request.return_context else None
+            context_used=result.context_used if request.return_context else None,
         )
 
     except Exception as e:
         logger.error(f"Generation failed: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Answer generation failed: {str(e)}"
+            detail=f"Answer generation failed: {str(e)}",
         )
-
 
 @app.get("/stats", response_model=StatsResponse, tags=["Management"])
 async def get_statistics():
@@ -275,9 +270,8 @@ async def get_statistics():
         logger.error(f"Failed to get stats: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve statistics: {str(e)}"
+            detail=f"Failed to retrieve statistics: {str(e)}",
         )
-
 
 @app.delete("/clear", tags=["Management"])
 async def clear_all_data():
@@ -297,20 +291,25 @@ async def clear_all_data():
             status_code=status.HTTP_200_OK,
             content={
                 "status": "success",
-                "message": "All documents cleared from vector store"
-            }
+                "message": "All documents cleared from vector store",
+            },
         )
 
     except Exception as e:
         logger.error(f"Failed to clear data: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to clear data: {str(e)}"
+            detail=f"Failed to clear data: {str(e)}",
         )
-
 
 # Run the application
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("rag_assistant.api:app", host="0.0.0.0", port=8000, reload=True, log_level="info")
+    uvicorn.run(
+        "rag_assistant.api:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info",
+    )

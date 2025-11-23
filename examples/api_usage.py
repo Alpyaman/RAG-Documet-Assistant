@@ -15,13 +15,11 @@ from pathlib import Path
 # Configuration
 BASE_URL = "http://localhost:8000"
 
-
 def print_section(title: str):
     """Print a formatted section header."""
     print("\n" + "=" * 60)
     print(f"  {title}")
     print("=" * 60)
-
 
 def health_check():
     """Check if the API is healthy."""
@@ -32,7 +30,6 @@ def health_check():
     print(f"Response: {json.dumps(response.json(), indent=2)}")
 
     return response.status_code == 200
-
 
 def upload_pdf(pdf_path: str):
     """Upload a PDF file to the API."""
@@ -56,20 +53,14 @@ def upload_pdf(pdf_path: str):
         print(f"Error: {response.text}")
         return None
 
-
 def query_documents(query: str, top_k: int = 5):
     """Query the document collection (retrieval only)."""
     print_section(f"Query: {query}")
 
-    payload = {
-        "query": query,
-        "top_k": top_k
-    }
+    payload = {"query": query, "top_k": top_k}
 
     response = requests.post(
-        f"{BASE_URL}/query",
-        json=payload,
-        headers={"Content-Type": "application/json"}
+        f"{BASE_URL}/query", json=payload, headers={"Content-Type": "application/json"}
     )
 
     print(f"Status Code: {response.status_code}")
@@ -78,11 +69,11 @@ def query_documents(query: str, top_k: int = 5):
         result = response.json()
         print(f"\nFound {result['count']} results:")
 
-        for i, doc in enumerate(result['results'], 1):
+        for i, doc in enumerate(result["results"], 1):
             print(f"\n--- Result {i} ---")
             print(f"Score: {doc.get('score', 'N/A'):.4f}")
             print(f"Text: {doc['text'][:200]}...")
-            if 'metadata' in doc:
+            if "metadata" in doc:
                 print(f"Metadata: {doc['metadata']}")
 
         return result
@@ -90,21 +81,16 @@ def query_documents(query: str, top_k: int = 5):
         print(f"Error: {response.text}")
         return None
 
-
 def generate_answer(query: str, top_k: int = 5, return_context: bool = False):
     """Generate an answer using RAG."""
     print_section(f"Generate Answer: {query}")
 
-    payload = {
-        "query": query,
-        "top_k": top_k,
-        "return_context": return_context
-    }
+    payload = {"query": query, "top_k": top_k, "return_context": return_context}
 
     response = requests.post(
         f"{BASE_URL}/generate",
         json=payload,
-        headers={"Content-Type": "application/json"}
+        headers={"Content-Type": "application/json"},
     )
 
     print(f"Status Code: {response.status_code}")
@@ -116,16 +102,15 @@ def generate_answer(query: str, top_k: int = 5, return_context: bool = False):
         print(f"\nAnswer ({result['model']}):")
         print(f"{result['answer']}")
 
-        if return_context and result.get('context_used'):
+        if return_context and result.get("context_used"):
             print(f"\nContext Used ({len(result['context_used'])} chunks):")
-            for i, context in enumerate(result['context_used'], 1):
+            for i, context in enumerate(result["context_used"], 1):
                 print(f"\n  {i}. {context[:150]}...")
 
         return result
     else:
         print(f"Error: {response.text}")
         return None
-
 
 def get_statistics():
     """Get pipeline statistics."""
@@ -136,20 +121,19 @@ def get_statistics():
     print(f"Status Code: {response.status_code}")
 
     if response.status_code == 200:
-        stats = response.json()['stats']
+        stats = response.json()["stats"]
         print(json.dumps(stats, indent=2))
         return stats
     else:
         print(f"Error: {response.text}")
         return None
 
-
 def clear_all_data():
     """Clear all documents (use with caution!)."""
     print_section("Clear All Data")
 
     confirm = input("Are you sure you want to delete all documents? (yes/no): ")
-    if confirm.lower() != 'yes':
+    if confirm.lower() != "yes":
         print("Cancelled.")
         return
 
@@ -157,7 +141,6 @@ def clear_all_data():
 
     print(f"Status Code: {response.status_code}")
     print(f"Response: {json.dumps(response.json(), indent=2)}")
-
 
 def main():
     """Run the example workflow."""
@@ -193,7 +176,6 @@ def main():
     print("Example complete!")
     print("\nAPI Documentation: http://localhost:8000/docs")
     print("=" * 60)
-
 
 if __name__ == "__main__":
     main()

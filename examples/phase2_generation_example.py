@@ -24,7 +24,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from rag_assistant.pipeline import RAGPipeline
 from rag_assistant.config import RagConfig
 
-
 def main():
     parser = argparse.ArgumentParser(description="Phase 2: RAG with LLM Generation")
     parser.add_argument(
@@ -32,19 +31,16 @@ def main():
         type=str,
         default="openai",
         choices=["openai", "ollama", "huggingface"],
-        help="LLM provider to use"
+        help="LLM provider to use",
     )
     parser.add_argument(
         "--model",
         type=str,
         default=None,
-        help="Model name (defaults based on provider)"
+        help="Model name (defaults based on provider)",
     )
     parser.add_argument(
-        "--pdf",
-        type=str,
-        default=None,
-        help="Path to PDF file to process (optional)"
+        "--pdf", type=str, default=None, help="Path to PDF file to process (optional)"
     )
 
     args = parser.parse_args()
@@ -95,13 +91,15 @@ def main():
     else:
         # Check if there's already data in the vector store
         stats = pipeline.get_stats()
-        if stats['vector_store']['total_documents'] == 0:
+        if stats["vector_store"]["total_documents"] == 0:
             print("⚠ No documents in vector store. Process some PDFs first!")
             print("  Example: python examples/basic_usage.py")
             print("  Or use --pdf flag to process a document")
             return
 
-        print(f"Found {stats['vector_store']['total_documents']} chunks in vector store\n")
+        print(
+            f"Found {stats['vector_store']['total_documents']} chunks in vector store\n"
+        )
 
     # Demo queries
     print(f"{'='*60}")
@@ -124,7 +122,11 @@ def main():
 
         if search_results:
             for j, result in enumerate(search_results[:2], 1):
-                snippet = result['text'][:200] + "..." if len(result['text']) > 200 else result['text']
+                snippet = (
+                    result["text"][:200] + "..."
+                    if len(result["text"]) > 200
+                    else result["text"]
+                )
                 print(f"  [{j}] {snippet}")
                 print(f"      (score: {result.get('score', 'N/A'):.3f})\n")
         else:
@@ -164,7 +166,6 @@ def main():
     print(f"Total Chunks: {stats['vector_store']['total_documents']}")
     print()
 
-
 def get_default_model(provider: str) -> str:
     """Get default model for a provider."""
     defaults = {
@@ -173,7 +174,6 @@ def get_default_model(provider: str) -> str:
         "huggingface": "google/flan-t5-base",
     }
     return defaults.get(provider, "gpt-3.5-turbo")
-
 
 if __name__ == "__main__":
     main()

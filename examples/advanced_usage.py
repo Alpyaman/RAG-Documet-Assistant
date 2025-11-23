@@ -12,9 +12,9 @@ Demonstrates advanced features:
 import sys
 from pathlib import Path
 import time
- 
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
- 
+
 from rag_assistant import (
     RAGPipeline,
     TextChunker,
@@ -24,27 +24,25 @@ from rag_assistant.chunking import ChunkingStrategy
 from rag_assistant.config import RagConfig
 from rich.console import Console
 
-
 console = Console()
-
 
 def example_batch_processing():
     """Demonstrate batch processing of multiple PDFs."""
- 
+
     console.print("\n[bold cyan]Example: Batch Processing[/bold cyan]\n")
- 
+
     pipeline = RAGPipeline()
- 
+
     # Process all PDFs in a directory
     pdf_directory = "./data/pdfs"
- 
+
     if not Path(pdf_directory).exists():
         console.print(f"[yellow]Directory not found: {pdf_directory}[/yellow]")
         console.print("[dim]Create ./data/pdfs/ and add PDF files to test[/dim]\n")
         return
 
     console.print(f"Processing all PDFs in: [cyan]{pdf_directory}[/cyan]\n")
- 
+
     result = pipeline.process_directory(pdf_directory)
 
     console.print("\n[bold green]Batch Processing Complete[/bold green]")
@@ -56,7 +54,6 @@ def example_batch_processing():
         console.print("\n[yellow]Errors encountered:[/yellow]")
         for error in result.errors:
             console.print(f"  - {error}")
-
 
 def example_custom_chunking():
     """Demonstrate different chunking strategies."""
@@ -72,15 +69,11 @@ def example_custom_chunking():
     for strategy, name in strategies:
         console.print(f"\n[yellow]Testing {name}[/yellow]")
 
-        chunker = TextChunker(
-            chunk_size=1000,
-            chunk_overlap=200,
-            strategy=strategy
-        )
+        chunker = TextChunker(chunk_size=1000, chunk_overlap=200, strategy=strategy)
 
         pipeline = RAGPipeline(
             chunker=chunker,
-            vector_store=VectorStore(collection_name=f"chunks_{strategy.value}")
+            vector_store=VectorStore(collection_name=f"chunks_{strategy.value}"),
         )
 
         # Process a sample PDF if available
@@ -91,8 +84,9 @@ def example_custom_chunking():
 
             # Get chunk statistics
             stats = chunker.get_chunk_stats(chunker.chunk_text("Sample text " * 200))
-            console.print(f"  Avg chunk size: {stats.get('avg_chunk_size', 0):.0f} chars")
-
+            console.print(
+                f"  Avg chunk size: {stats.get('avg_chunk_size', 0):.0f} chars"
+            )
 
 def example_custom_config():
     """Demonstrate custom configuration."""
@@ -106,7 +100,7 @@ def example_custom_config():
         embedding_model_name="sentence-transformers/all-MiniLM-L6-v2",
         batch_size=64,  # Larger batch size
         device="cpu",
-        collection_name="custom_collection"
+        collection_name="custom_collection",
     )
 
     console.print("[bold]Custom Configuration:[/bold]")
@@ -118,8 +112,9 @@ def example_custom_config():
     # Initialize pipeline with custom config
     pipeline = RAGPipeline(config=custom_config)
 
-    console.print(f"\n[green]✓ Pipeline initialized with custom config[/green] {pipeline}")
-
+    console.print(
+        f"\n[green]✓ Pipeline initialized with custom config[/green] {pipeline}"
+    )
 
 def example_metadata_filtering():
     """Demonstrate metadata filtering in queries."""
@@ -139,17 +134,16 @@ def example_metadata_filtering():
 
     # Search with metadata filter (if documents are processed)
     if all_results:
-        sample_filename = all_results[0]['metadata'].get('filename')
+        sample_filename = all_results[0]["metadata"].get("filename")
 
         if sample_filename:
             filtered_results = pipeline.query(
-                query,
-                top_k=5,
-                filter_metadata={"filename": sample_filename}
+                query, top_k=5, filter_metadata={"filename": sample_filename}
             )
 
-            console.print(f"Results filtered by '{sample_filename}': {len(filtered_results)}")
-
+            console.print(
+                f"Results filtered by '{sample_filename}': {len(filtered_results)}"
+            )
 
 def example_performance_comparison():
     """Compare performance of different configurations."""
@@ -159,7 +153,9 @@ def example_performance_comparison():
     sample_pdf = "./data/pdfs/sample_document.pdf"
 
     if not Path(sample_pdf).exists():
-        console.print("[yellow]Sample PDF not found, skipping performance test[/yellow]")
+        console.print(
+            "[yellow]Sample PDF not found, skipping performance test[/yellow]"
+        )
         return
 
     configs = [
@@ -180,11 +176,13 @@ def example_performance_comparison():
         result = pipeline.process_pdf(sample_pdf)
         elapsed = time.time() - start
 
-        results.append({
-            "name": name,
-            "chunks": result.chunks_created,
-            "time": elapsed,
-        })
+        results.append(
+            {
+                "name": name,
+                "chunks": result.chunks_created,
+                "time": elapsed,
+            }
+        )
 
         console.print(f"  Chunks: {result.chunks_created}")
         console.print(f"  Time: {elapsed:.2f}s")
@@ -193,7 +191,6 @@ def example_performance_comparison():
     console.print("\n[bold]Performance Summary:[/bold]")
     for r in results:
         console.print(f"  {r['name']}: {r['chunks']} chunks in {r['time']:.2f}s")
-
 
 def main():
     """Run all advanced examples."""
@@ -222,10 +219,10 @@ def main():
         except Exception as e:
             console.print(f"\n[red]Error in {name}: {e}[/red]")
             import traceback
+
             traceback.print_exc()
 
     console.print("\n[green]✓ All examples completed[/green]\n")
-
 
 if __name__ == "__main__":
     try:
@@ -235,4 +232,5 @@ if __name__ == "__main__":
     except Exception as e:
         console.print(f"\n[bold red]Error:[/bold red] {e}")
         import traceback
+
         traceback.print_exc()

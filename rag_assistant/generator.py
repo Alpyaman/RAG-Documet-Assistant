@@ -14,7 +14,6 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
-
 @dataclass
 class GenerationResult:
     """Result from LLM generation."""
@@ -35,7 +34,6 @@ class GenerationResult:
             f")"
         )
 
-
 class BaseLLMGenerator(ABC):
     """
     Abstract base class for LLM generators.
@@ -44,7 +42,9 @@ class BaseLLMGenerator(ABC):
     (OpenAI, Ollama, HuggingFace) without changing the pipeline code.
     """
 
-    def __init__(self, model_name: str, temperature: float = 0.7, max_tokens: int = 512):
+    def __init__(
+        self, model_name: str, temperature: float = 0.7, max_tokens: int = 512
+    ):
         """
         Initialize the LLM generator.
 
@@ -57,7 +57,6 @@ class BaseLLMGenerator(ABC):
         self.temperature = temperature
         self.max_tokens = max_tokens
         logger.info(f"Initialized {self.__class__.__name__} with model: {model_name}")
-
     @abstractmethod
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
@@ -71,7 +70,6 @@ class BaseLLMGenerator(ABC):
             GenerationResult with the generated answer
         """
         pass
-
     def build_prompt(self, query: str, context: List[str]) -> str:
         """
         Build a prompt from query and context chunks.
@@ -85,7 +83,9 @@ class BaseLLMGenerator(ABC):
         Returns:
             Formatted prompt string
         """
-        context_text = "\n\n".join([f"[{i+1}] {chunk}" for i, chunk in enumerate(context)])
+        context_text = "\n\n".join(
+            [f"[{i+1}] {chunk}" for i, chunk in enumerate(context)]
+        )
 
         prompt = f"""You are a helpful AI assistant. Answer the user's question based on the provided context.
 
@@ -103,7 +103,6 @@ Instructions:
 Answer:"""
 
         return prompt
-
     def get_model_info(self) -> Dict:
         """Get information about the current model."""
         return {
@@ -112,7 +111,6 @@ Answer:"""
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
         }
-
 
 class OpenAIGenerator(BaseLLMGenerator):
     """
@@ -126,7 +124,13 @@ class OpenAIGenerator(BaseLLMGenerator):
         >>> print(result.answer)
     """
 
-    def __init__(self, model_name: str = "gpt-3.5-turbo", temperature: float = 0.7, max_tokens: int = 512, api_key: Optional[str] = None):
+    def __init__(
+        self,
+        model_name: str = "gpt-3.5-turbo",
+        temperature: float = 0.7,
+        max_tokens: int = 512,
+        api_key: Optional[str] = None,
+    ):
         """
         Initialize OpenAI generator.
 
@@ -146,13 +150,13 @@ class OpenAIGenerator(BaseLLMGenerator):
             )
 
         import os
+
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY not found in environment variables")
 
         self.client = OpenAI(api_key=self.api_key)
         logger.info(f"OpenAI client initialized with model: {model_name}")
-
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
         Generate answer using OpenAI API.
@@ -172,8 +176,11 @@ class OpenAIGenerator(BaseLLMGenerator):
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[
-                    {"role": "system", "content": "You are a helpful AI assistant that answers questions based on provided context."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "You are a helpful AI assistant that answers questions based on provided context.",
+                    },
+                    {"role": "user", "content": prompt},
                 ],
                 temperature=self.temperature,
                 max_tokens=self.max_tokens,
@@ -190,13 +197,14 @@ class OpenAIGenerator(BaseLLMGenerator):
                 context_used=context,
             )
 
-            logger.info(f"Generated answer: {len(answer)} chars, {result.total_tokens} tokens")
+            logger.info(
+                f"Generated answer: {len(answer)} chars, {result.total_tokens} tokens"
+            )
             return result
 
         except Exception as e:
             logger.error(f"OpenAI generation failed: {e}")
             raise
-
 
 class OllamaGenerator(BaseLLMGenerator):
     """
@@ -211,7 +219,13 @@ class OllamaGenerator(BaseLLMGenerator):
         >>> print(result.answer)
     """
 
-    def __init__(self, model_name: str = "llama2", temperature: float = 0.7, max_tokens: int = 512, base_url: str = "http://localhost:11434"):
+    def __init__(
+        self,
+        model_name: str = "llama2",
+        temperature: float = 0.7,
+        max_tokens: int = 512,
+        base_url: str = "http://localhost:11434",
+    ):
         """
         Initialize Ollama generator.
 
@@ -227,6 +241,7 @@ class OllamaGenerator(BaseLLMGenerator):
 
         try:
             import requests
+
             self.requests = requests
         except ImportError:
             raise ImportError(
@@ -244,7 +259,6 @@ class OllamaGenerator(BaseLLMGenerator):
                 f"Cannot connect to Ollama at {base_url}. "
                 f"Make sure Ollama is installed and running. Error: {e}"
             )
-
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
         Generate answer using Ollama.
@@ -270,9 +284,9 @@ class OllamaGenerator(BaseLLMGenerator):
                     "stream": False,
                     "options": {
                         "num_predict": self.max_tokens,
-                    }
+                    },
                 },
-                timeout=120  # Ollama can be slow on first run
+                timeout=120,  # Ollama can be slow on first run
             )
 
             response.raise_for_status()
@@ -285,8 +299,10 @@ class OllamaGenerator(BaseLLMGenerator):
                 model=self.model_name,
                 prompt_tokens=result_data.get("prompt_eval_count"),
                 completion_tokens=result_data.get("eval_count"),
-                total_tokens=(result_data.get("prompt_eval_count", 0) +
-                            result_data.get("eval_count", 0)),
+                total_tokens=(
+                    result_data.get("prompt_eval_count", 0)
+                    + result_data.get("eval_count", 0)
+                ),
                 context_used=context,
             )
 
@@ -296,7 +312,6 @@ class OllamaGenerator(BaseLLMGenerator):
         except Exception as e:
             logger.error(f"Ollama generation failed: {e}")
             raise
-
 
 class HuggingFaceGenerator(BaseLLMGenerator):
     """
@@ -311,7 +326,13 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         >>> print(result.answer)
     """
 
-    def __init__(self, model_name: str = "google/flan-t5-base", temperature: float = 0.7, max_tokens: int = 512, device: str = "cpu"):
+    def __init__(
+        self,
+        model_name: str = "google/flan-t5-base",
+        temperature: float = 0.7,
+        max_tokens: int = 512,
+        device: str = "cpu",
+    ):
         """
         Initialize HuggingFace generator.
 
@@ -324,7 +345,11 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         super().__init__(model_name, temperature, max_tokens)
 
         try:
-            from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForCausalLM
+            from transformers import (
+                AutoTokenizer,
+                AutoModelForSeq2SeqLM,
+                AutoModelForCausalLM,
+            )
             import torch
         except ImportError:
             raise ImportError(
@@ -354,7 +379,6 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         self.model.eval()
 
         logger.info(f"Model loaded successfully (type: {self.model_type})")
-
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
         Generate answer using HuggingFace model.
@@ -373,10 +397,7 @@ class HuggingFaceGenerator(BaseLLMGenerator):
 
             # Tokenize input
             inputs = self.tokenizer(
-                prompt,
-                return_tensors="pt",
-                truncation=True,
-                max_length=2048
+                prompt, return_tensors="pt", truncation=True, max_length=2048
             ).to(self.device)
 
             # Generate
@@ -396,11 +417,10 @@ class HuggingFaceGenerator(BaseLLMGenerator):
             else:
                 # For causal models, skip the input tokens
                 answer = self.tokenizer.decode(
-                    outputs[0][inputs['input_ids'].shape[1]:],
-                    skip_special_tokens=True
+                    outputs[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
                 )
-             # Estimate token counts
-            prompt_tokens = inputs['input_ids'].shape[1]
+            # Estimate token counts
+            prompt_tokens = inputs["input_ids"].shape[1]
             completion_tokens = len(self.tokenizer.encode(answer))
 
             result = GenerationResult(
@@ -419,8 +439,9 @@ class HuggingFaceGenerator(BaseLLMGenerator):
             logger.error(f"HuggingFace generation failed: {e}")
             raise
 
-
-def create_generator(provider: str = "openai", model_name: Optional[str] = None, **kwargs) -> BaseLLMGenerator:
+def create_generator(
+    provider: str = "openai", model_name: Optional[str] = None, **kwargs
+) -> BaseLLMGenerator:
     """
     Factory function to create an LLM generator.
 
