@@ -61,6 +61,9 @@ jobs:
     - name: Run flake8
       run: flake8 rag_assistant/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
+    - name: Check code differences with black
+      run: black --diff rag_assistant/
+
     - name: Check code formatting with black
       run: black --check rag_assistant/
 
