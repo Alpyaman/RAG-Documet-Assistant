@@ -1,4 +1,10 @@
 # 🤖 RAG Document Assistant
+
+[![CI Pipeline](https://github.com/Alpyaman/RAG-Document-Assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/Alpyaman/RAG-Document-Assistant/actions)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
  
 **An end-to-end AI-powered document intelligence system** — Upload PDFs, ask questions, get answers backed by source citations.
  
