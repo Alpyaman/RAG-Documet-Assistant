@@ -18,6 +18,7 @@ from .chunking import Chunk
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class VectorStore:
     """
     Manages vector embeddings storage and retrieval using ChromaDB.
@@ -73,6 +74,7 @@ class VectorStore:
             f"Collection: {collection_name}, "
             f"Documents: {self.collection.count()}"
         )
+
     def add_embeddings(
         self, embeddings: np.ndarray, chunks: List[Chunk], batch_size: int = 100
     ) -> None:
@@ -120,6 +122,7 @@ class VectorStore:
             f"Successfully added {len(chunks)} documents. "
             f"Total in collection: {self.collection.count()}"
         )
+
     def search(
         self,
         query_embedding: np.ndarray,
@@ -171,6 +174,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Search failed: {e}")
             raise
+
     def search_by_text(
         self, query_text: str, top_k: int = 5, filter_metadata: Optional[Dict] = None
     ) -> List[Dict]:
@@ -214,6 +218,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Text search failed: {e}")
             raise
+
     def get_by_id(self, chunk_id: str) -> Optional[Dict]:
         """
         Retrieve a specific chunk by its ID.
@@ -242,6 +247,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to get chunk {chunk_id}: {e}")
             return None
+
     def delete_by_metadata(self, metadata_filter: Dict) -> int:
         """
         Delete documents matching metadata filter.
@@ -267,6 +273,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to delete by metadata: {e}")
             raise
+
     def delete_collection(self) -> None:
         """Delete the entire collection and all its data."""
         try:
@@ -282,6 +289,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to delete collection: {e}")
             raise
+
     def get_collection_stats(self) -> Dict:
         """
         Get statistics about the collection.
@@ -306,6 +314,7 @@ class VectorStore:
             "persist_directory": str(self.persist_directory),
             "sample_unique_files": list(unique_files),
         }
+
     def list_documents(self, limit: int = 10) -> List[Dict]:
         """
         List documents in the collection.
@@ -334,6 +343,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to list documents: {e}")
             return []
+
     def reset(self) -> None:
         """
         Reset the vector store (clear all data).
@@ -342,6 +352,7 @@ class VectorStore:
         """
         logger.warning("Resetting vector store - all data will be lost!")
         self.delete_collection()
+
     def __repr__(self) -> str:
         count = self.collection.count()
         return f"VectorStore(collection='{self.collection_name}', documents={count})"

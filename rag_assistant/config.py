@@ -6,6 +6,7 @@ Uses Pydantic for validation and environment variable management.
 from pydantic_settings import BaseSettings
 from pydantic import Field
 
+
 class RagConfig(BaseSettings):
     """Configuration for RAG pipeline components."""
 
@@ -87,6 +88,7 @@ class RagConfig(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+
 
 def get_config() -> RagConfig:
     """Factory function to get configuration instance."""

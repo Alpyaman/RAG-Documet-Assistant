@@ -15,6 +15,7 @@ from .chunking import Chunk
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class EmbeddingGenerator:
     """
     Generates semantic embeddings for text chunks using pre-trained models.
@@ -72,6 +73,7 @@ class EmbeddingGenerator:
         except Exception as e:
             logger.error(f"Failed to load model {model_name}: {e}")
             raise
+
     def embed_chunks(
         self, chunks: List[Chunk], show_progress: bool = True
     ) -> Tuple[np.ndarray, List[str]]:
@@ -114,6 +116,7 @@ class EmbeddingGenerator:
         except Exception as e:
             logger.error(f"Failed to generate embeddings: {e}")
             raise
+
     def embed_text(self, text: str) -> np.ndarray:
         """
         Generate embedding for a single text (e.g., a query).
@@ -136,6 +139,7 @@ class EmbeddingGenerator:
         except Exception as e:
             logger.error(f"Failed to embed text: {e}")
             raise
+
     def embed_batch(self, texts: List[str], show_progress: bool = False) -> np.ndarray:
         """
         Generate embedding for a batch of texts.
@@ -161,6 +165,7 @@ class EmbeddingGenerator:
         except Exception as e:
             logger.error(f"Failed to embed batch: {e}")
             raise
+
     def compute_similarity(
         self, embedding1: np.ndarray, embedding2: np.ndarray
     ) -> float:
@@ -186,6 +191,7 @@ class EmbeddingGenerator:
             return 0.0
 
         return float(np.dot(embedding1, embedding2) / (norm1 * norm2))
+
     def get_model_info(self) -> dict:
         """
         Get information about the loaded model.
@@ -201,6 +207,7 @@ class EmbeddingGenerator:
             "normalized": self.normalize_embeddings,
             "max_seq_length": self.model.max_seq_length,
         }
+
     @staticmethod
     def list_recommended_models() -> dict:
         """
@@ -216,6 +223,7 @@ class EmbeddingGenerator:
             "multilingual": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
             "legal_financial": "sentece-transformers/all-mpnet-base-v2",
         }
+
 
 class EmbeddingCache:
     """
@@ -235,6 +243,7 @@ class EmbeddingCache:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
         logger.info(f"Embedding cache initialized at {self.cache_dir}")
+
     def save(
         self, chunk_ids: List[str], embeddings: np.ndarray, cache_key: str
     ) -> None:
@@ -251,6 +260,7 @@ class EmbeddingCache:
         np.savez(cache_file, embeddings=embeddings, chunk_ids=chunk_ids)
 
         logger.info(f"Saved {len(embeddings)} embeddings to cache: {cache_key}")
+
     def load(self, cache_key: str) -> Optional[Tuple[np.ndarray, List[str]]]:
         """
         Load embeddings from cache.
@@ -277,6 +287,7 @@ class EmbeddingCache:
         except Exception as e:
             logger.error(f"Failed to load cache {cache_key}: {e}")
             return None
+
     def clear(self) -> None:
         """Delete all cached embeddings."""
         import shutil

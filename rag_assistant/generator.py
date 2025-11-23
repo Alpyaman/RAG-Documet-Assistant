@@ -14,6 +14,7 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class GenerationResult:
     """Result from LLM generation."""
@@ -33,6 +34,7 @@ class GenerationResult:
             f"  total_tokens={self.total_tokens}\n"
             f")"
         )
+
 
 class BaseLLMGenerator(ABC):
     """
@@ -57,6 +59,7 @@ class BaseLLMGenerator(ABC):
         self.temperature = temperature
         self.max_tokens = max_tokens
         logger.info(f"Initialized {self.__class__.__name__} with model: {model_name}")
+
     @abstractmethod
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
@@ -70,6 +73,7 @@ class BaseLLMGenerator(ABC):
             GenerationResult with the generated answer
         """
         pass
+
     def build_prompt(self, query: str, context: List[str]) -> str:
         """
         Build a prompt from query and context chunks.
@@ -103,6 +107,7 @@ Instructions:
 Answer:"""
 
         return prompt
+
     def get_model_info(self) -> Dict:
         """Get information about the current model."""
         return {
@@ -111,6 +116,7 @@ Answer:"""
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
         }
+
 
 class OpenAIGenerator(BaseLLMGenerator):
     """
@@ -157,6 +163,7 @@ class OpenAIGenerator(BaseLLMGenerator):
 
         self.client = OpenAI(api_key=self.api_key)
         logger.info(f"OpenAI client initialized with model: {model_name}")
+
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
         Generate answer using OpenAI API.
@@ -205,6 +212,7 @@ class OpenAIGenerator(BaseLLMGenerator):
         except Exception as e:
             logger.error(f"OpenAI generation failed: {e}")
             raise
+
 
 class OllamaGenerator(BaseLLMGenerator):
     """
@@ -259,6 +267,7 @@ class OllamaGenerator(BaseLLMGenerator):
                 f"Cannot connect to Ollama at {base_url}. "
                 f"Make sure Ollama is installed and running. Error: {e}"
             )
+
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
         Generate answer using Ollama.
@@ -312,6 +321,7 @@ class OllamaGenerator(BaseLLMGenerator):
         except Exception as e:
             logger.error(f"Ollama generation failed: {e}")
             raise
+
 
 class HuggingFaceGenerator(BaseLLMGenerator):
     """
@@ -379,6 +389,7 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         self.model.eval()
 
         logger.info(f"Model loaded successfully (type: {self.model_type})")
+
     def generate(self, query: str, context: List[str]) -> GenerationResult:
         """
         Generate answer using HuggingFace model.
@@ -438,6 +449,7 @@ class HuggingFaceGenerator(BaseLLMGenerator):
         except Exception as e:
             logger.error(f"HuggingFace generation failed: {e}")
             raise
+
 
 def create_generator(
     provider: str = "openai", model_name: Optional[str] = None, **kwargs

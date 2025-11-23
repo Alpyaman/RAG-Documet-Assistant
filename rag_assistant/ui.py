@@ -65,6 +65,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 def check_api_health() -> bool:
     """Check if the API is accessible."""
     try:
@@ -72,6 +73,7 @@ def check_api_health() -> bool:
         return response.status_code == 200
     except Exception:
         return False
+
 
 def upload_pdf(file) -> Optional[Dict]:
     """Upload a PDF file to the API."""
@@ -84,6 +86,7 @@ def upload_pdf(file) -> Optional[Dict]:
         st.error(f"Upload failed: {str(e)}")
         return None
 
+
 def query_documents(query: str, top_k: int = 5) -> Optional[Dict]:
     """Query documents without generation."""
     try:
@@ -95,6 +98,7 @@ def query_documents(query: str, top_k: int = 5) -> Optional[Dict]:
     except requests.exceptions.RequestException as e:
         st.error(f"Query failed: {str(e)}")
         return None
+
 
 def generate_answer(
     query: str, top_k: int = 5, return_context: bool = True
@@ -111,6 +115,7 @@ def generate_answer(
         st.error(f"Generation failed: {str(e)}")
         return None
 
+
 def get_stats() -> Optional[Dict]:
     """Get system statistics."""
     try:
@@ -121,6 +126,7 @@ def get_stats() -> Optional[Dict]:
         st.error(f"Failed to fetch stats: {str(e)}")
         return None
 
+
 def clear_all_data() -> bool:
     """Clear all documents from the system."""
     try:
@@ -130,6 +136,7 @@ def clear_all_data() -> bool:
     except requests.exceptions.RequestException as e:
         st.error(f"Failed to clear data: {str(e)}")
         return False
+
 
 def display_source(source: Dict, index: int):
     """Display a single source document."""
@@ -145,12 +152,14 @@ def display_source(source: Dict, index: int):
         unsafe_allow_html=True,
     )
 
+
 def initialize_session_state():
     """Initialize session state variables."""
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = []
+
 
 def main():
     """Main application."""
@@ -416,6 +425,7 @@ def main():
                 st.success("✅ API is healthy and reachable!")
             else:
                 st.error("❌ Cannot reach the API")
+
 
 if __name__ == "__main__":
     main()

@@ -22,6 +22,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class PipelineResult:
     """Results from pipeline execution."""
@@ -42,6 +43,7 @@ class PipelineResult:
             f"  errors={len(self.errors)}\n"
             f")"
         )
+
 
 class RAGPipeline:
     """
@@ -127,6 +129,7 @@ class RAGPipeline:
         )
 
         logger.info("RAG Pipeline initialized successfully")
+
     def process_pdf(self, pdf_path: str | Path) -> PipelineResult:
         """
         Process a single PDF through the complete pipeline.
@@ -191,6 +194,7 @@ class RAGPipeline:
                 processing_time=processing_time,
                 errors=errors,
             )
+
     def process_directory(self, directory_path: str | Path) -> PipelineResult:
         """
         Process all PDFs in a directory.
@@ -247,6 +251,7 @@ class RAGPipeline:
         logger.info("=" * 60)
 
         return result
+
     def query(
         self,
         query_text: str,
@@ -285,6 +290,7 @@ class RAGPipeline:
                 result["query_embedding"] = query_embedding
 
         return results
+
     def generate_answer(
         self,
         query_text: str,
@@ -342,6 +348,7 @@ class RAGPipeline:
             result.context_used = None
 
         return result
+
     def get_stats(self) -> Dict:
         """
         Get statistics about the pipeline and stored data.
@@ -363,6 +370,7 @@ class RAGPipeline:
             "llm_model": llm_model_info,
             "vector_store": vector_stats,
         }
+
     def clear_all_data(self) -> None:
         """
         Clear all data from the vector store.
@@ -372,6 +380,7 @@ class RAGPipeline:
         logger.warning("Clearing all pipeline data...")
         self.vector_store.reset()
         logger.info("All data cleared successfully")
+
     def __repr__(self) -> str:
         stats = self.vector_store.get_collection_stats()
         return (

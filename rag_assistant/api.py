@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 # Global pipeline instance
 pipeline: Optional[RAGPipeline] = None
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application lifespan - initialize and cleanup."""
@@ -51,6 +52,7 @@ async def lifespan(app: FastAPI):
     # Cleanup (if needed)
     logger.info("Shutting down RAG Pipeline...")
 
+
 # Create FastAPI app
 app = FastAPI(
     title="RAG Document Assistant API",
@@ -58,6 +60,7 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
 
 # Request/Response Models
 class QueryRequest(BaseModel):
@@ -71,12 +74,14 @@ class QueryRequest(BaseModel):
         default=None, description="Optional metadata filters"
     )
 
+
 class QueryResponse(BaseModel):
     """Response model for query results."""
 
     query: str
     results: List[Dict]
     count: int
+
 
 class GenerateRequest(BaseModel):
     """Request model for generating answers."""
@@ -89,6 +94,7 @@ class GenerateRequest(BaseModel):
         default=False, description="Include context chunks in response"
     )
 
+
 class GenerateResponse(BaseModel):
     """Response model for generated answers."""
 
@@ -97,6 +103,7 @@ class GenerateResponse(BaseModel):
     model: str
     context_used: Optional[List[str]] = None
 
+
 class UploadResponse(BaseModel):
     """Response model for file upload."""
 
@@ -104,12 +111,15 @@ class UploadResponse(BaseModel):
     status: str
     result: Dict
 
+
 class StatsResponse(BaseModel):
     """Response model for statistics."""
 
     stats: Dict
 
+
 # API Endpoints
+
 
 @app.get("/", tags=["Health"])
 async def root():
@@ -119,6 +129,7 @@ async def root():
         "service": "RAG Document Assistant API",
         "version": "1.0.0",
     }
+
 
 @app.post("/upload", response_model=UploadResponse, tags=["Documents"])
 async def upload_pdf(file: UploadFile = File(...)):
@@ -184,6 +195,7 @@ async def upload_pdf(file: UploadFile = File(...)):
             detail=f"Failed to process file: {str(e)}",
         )
 
+
 @app.post("/query", response_model=QueryResponse, tags=["Search"])
 async def query_documents(request: QueryRequest):
     """
@@ -215,6 +227,7 @@ async def query_documents(request: QueryRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Query failed: {str(e)}",
         )
+
 
 @app.post("/generate", response_model=GenerateResponse, tags=["Generation"])
 async def generate_answer(request: GenerateRequest):
@@ -254,6 +267,7 @@ async def generate_answer(request: GenerateRequest):
             detail=f"Answer generation failed: {str(e)}",
         )
 
+
 @app.get("/stats", response_model=StatsResponse, tags=["Management"])
 async def get_statistics():
     """
@@ -272,6 +286,7 @@ async def get_statistics():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve statistics: {str(e)}",
         )
+
 
 @app.delete("/clear", tags=["Management"])
 async def clear_all_data():
@@ -301,6 +316,7 @@ async def clear_all_data():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to clear data: {str(e)}",
         )
+
 
 # Run the application
 if __name__ == "__main__":

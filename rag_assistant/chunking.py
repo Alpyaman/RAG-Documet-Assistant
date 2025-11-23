@@ -15,6 +15,7 @@ from .ingestion import Document
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class ChunkingStrategy(Enum):
     """Available text chunking strategies."""
 
@@ -22,6 +23,7 @@ class ChunkingStrategy(Enum):
     SENTENCE = "sentence"
     PARAGRAPH = "paragraph"
     SEMANTIC = "semantic"
+
 
 @dataclass
 class Chunk:
@@ -36,6 +38,7 @@ class Chunk:
     def __repr__(self) -> str:
         preview = self.text[:50] + "..." if len(self.text) > 50 else self.text
         return f"Chunk(id={self.chunk_id}, length={len(self.text)}, preview={preview})"
+
 
 class TextChunker:
     """
@@ -77,6 +80,7 @@ class TextChunker:
         logger.info(
             f"TextChunker initialized with strategy={strategy.value}, chunk_size={self.chunk_size}, chunk_overlap={self.chunk_overlap}"
         )
+
     def chunk_document(self, document: Document) -> List[Chunk]:
         """
         Split a document into chunks based on the configured strategy.
@@ -101,6 +105,7 @@ class TextChunker:
         )
 
         return chunks
+
     def chunk_text(self, text: str, source: str = "text") -> List[Chunk]:
         """
         Chunk raw text directly (convenience method).
@@ -114,6 +119,7 @@ class TextChunker:
         """
         doc = Document(content=text, metadata={"source": source}, source=source)
         return self.chunk_document(doc)
+
     def _chunk_fixed_size(self, document: Document) -> List[Chunk]:
         """
         Split text into fixed-size chunks with overlap.
@@ -156,6 +162,7 @@ class TextChunker:
             chunk_index += 1
 
         return chunks
+
     def _chunk_by_sentence(self, document: Document) -> List[Chunk]:
         """
         Split text into chunks at sentence boundaries.
@@ -234,6 +241,7 @@ class TextChunker:
             )
 
         return chunks
+
     def _chunk_by_paragraph(self, document: Document) -> List[Chunk]:
         """
         Split text into chunks at paragraph boundaries.
@@ -318,6 +326,7 @@ class TextChunker:
             )
 
         return chunks
+
     def get_chunk_stats(self, chunks: List[Chunk]) -> Dict[str, any]:
         """
         Calculate statistics about the chunks.

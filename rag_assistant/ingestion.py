@@ -16,6 +16,7 @@ from PyPDF2.errors import PdfReadError
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class Document:
     """Represents a processed document with metadata."""
@@ -29,6 +30,7 @@ class Document:
             self.content[:100] + "..." if len(self.content) > 100 else self.content
         )
         return f"Document(source={self.source}, length={len(self.content)}, preview={preview})"
+
 
 class PDFIngestor:
     """
@@ -55,6 +57,7 @@ class PDFIngestor:
         """
         self.encoding = encoding
         logger.info("PDFIngestor initialized")
+
     def ingest_pdf(self, pdf_path: str | Path) -> Document:
         """
         Extract text and metadata from a single PDF file.
@@ -107,6 +110,7 @@ class PDFIngestor:
         except PdfReadError as e:
             logger.error(f"Failed to read PDF {pdf_path.name}: {e}")
             raise
+
     def ingest_directory(self, directory_path: str | Path) -> List[Document]:
         """
         Process all PDF files in a directory.
@@ -135,6 +139,7 @@ class PDFIngestor:
 
         logger.info(f"Successfully processed {len(documents)}/{len(pdf_files)} PDFs")
         return documents
+
     def _extract_metadata(self, reader: PdfReader, pdf_path: Path) -> Dict[str, any]:
         """
         Extract metadata from PDF.
@@ -167,6 +172,7 @@ class PDFIngestor:
                 logger.debug(f"Could not extract all metadata: {e}")
 
         return metadata
+
     def get_page_content(self, pdf_path: str | Path, page_number: int) -> str:
         """
         Extract text from a specific page.
