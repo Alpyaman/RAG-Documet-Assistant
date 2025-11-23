@@ -1,6 +1,6 @@
 """
 Streamlit UI for RAG Document Assistant.
- 
+
 This frontend provides a user-friendly interface to:
 - Upload PDF documents
 - Query and chat with documents

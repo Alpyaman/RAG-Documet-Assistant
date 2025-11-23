@@ -1,6 +1,6 @@
 """
 RAG Pipeline - Orchestrates the complete document processing workflow.
- 
+
 This module ties together all components to provide an end-to-end
 RAG document processing pipeline.
 """
@@ -120,12 +120,16 @@ class RAGPipeline:
             temperature=self.config.llm_temperature,
             max_tokens=self.config.llm_max_tokens,
             api_key=self.config.openai_api_key if self.config.openai_api_key else None,
-            base_url=self.config.ollama_base_url
-            if self.config.llm_provider == "ollama"
-            else None,
-            device=self.config.device
-            if self.config.llm_provider == "huggingface"
-            else None,
+            base_url=(
+                self.config.ollama_base_url
+                if self.config.llm_provider == "ollama"
+                else None
+            ),
+            device=(
+                self.config.device
+                if self.config.llm_provider == "huggingface"
+                else None
+            ),
         )
 
         logger.info("RAG Pipeline initialized successfully")

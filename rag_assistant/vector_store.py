@@ -1,6 +1,6 @@
 """
 Vector Store Module - Manages document embeddings in ChromaDB.
- 
+
 Provides persistent storage and efficient similarity search for
 document embeddings using ChromaDB.
 """
