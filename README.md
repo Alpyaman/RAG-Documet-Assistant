@@ -395,7 +395,7 @@ A: Yes! The Docker image can be deployed anywhere. See deployment docs (coming s
  
 ## 📧 Contact
  
-**Alperen Alp Yaman**
+**Alp Yaman**
  
 - GitHub: [@Alpyaman](https://github.com/Alpyaman)
 - Project Link: [RAG-Document-Assistant](https://github.com/Alpyaman/RAG-Document-Assistant)
